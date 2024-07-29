@@ -1,6 +1,8 @@
 (setq package-archives '(("gnu" . "http://mirrors.163.com/elpa/gnu/")
 			 ("melpa" . "https://melpa.org/packages/")
-			 ("org" . "http://orgmode.org/elpa/")))
+			 ("org" . "http://orgmode.org/elpa/")
+			 ("elpa". "https://elpa.gnu.org/packages/")
+			 ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
 
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 (require 'package)
@@ -11,6 +13,8 @@
   (package-install 'use-package))
 (require 'use-package)
 (setq use-package-always-ensure t)
+
+(global-display-line-numbers-mode 1)
 
 (use-package auto-package-update
   :custom
@@ -44,7 +48,22 @@
 (use-package corfu
   :custom
   (corfu-auto 1)
-  (corfu-cycle t))
+  (corfu-cycle t)
+  :config
+  (global-corfu-mode)
+  )
+
+;; (use-package emacs-popon
+;;   ;; :load-path "~/.emacs.d/emacs-popon"
+;;   )
+
+(use-package corfu-terminal
+  ;; :load-path "~/.emacs.d/emacs-corfu-terminal"
+  :demand t
+  :config
+  (unless (display-graphic-p)
+    (corfu-terminal-mode +1))
+  )
 
 (use-package vertico
   :init (vertico-mode)
@@ -92,3 +111,20 @@
 
 (use-package magit
   :bind("C-c C-m" . magit-status))
+
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/") t)
+(package-initialize)
+;; Require snakemake-mode package
+(require 'snakemake-mode)
+
+;; Associate snakemake-mode with Snakemake files
+(add-to-list 'auto-mode-alist '("\\.smk\\'" . snakemake-mode))
+(add-to-list 'auto-mode-alist '("\\Snakefile\\'" . snakemake-mode))
+
+;; Optionally, you can also add a hook to activate snakemake-mode for snakefile
+(add-hook 'snakemake-mode-hook
+          (lambda ()
+            (setq indent-tabs-mode nil)  ;; Use spaces instead of tabs
+            (setq tab-width 4)))         ;; Set tab width to 4 spaces
